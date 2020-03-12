@@ -1,20 +1,22 @@
-var max0n = new Object();
+var max0n: any = new Object();
+
 max0n.launcher = function() { //запуск видимых блоков с встроенными функциями (анимацией)
-    if(max0n.launcherArray.length>0){
+    if (max0n.launcherArray.length>0) {
     	var del = 0; //счётчик удаления
-    	for(var i=0; i<max0n.launcherArray.length; i++){ //перебор всех блоков
-    		(function(i){//замыкание
+    	for (var i=0; i<max0n.launcherArray.length; i++) { //перебор всех блоков
+    		(function(i) {//замыкание
 		    	var elemArrow = document.getElementById(max0n.launcherArray[i][0]); //Присвоение блока анимации
 		    	if(document.body.clientHeight-elemArrow.getBoundingClientRect().top>elemArrow.offsetHeight*0.75){ //если блок виден, то...
 		    		del++; //увеличить счётчик удаления
-					max0n.launcherArray[i][1](); //выполнить функцию в блоке
-				}
-			})(i);
+  					max0n.launcherArray[i][1](); //выполнить функцию в блоке
+  				}
+  			})(i);
     	}
     	max0n.launcherArray.splice(0,del); //удаление проигранной анимации из очереди
 	}
 }
-max0n.cashFlow = function (svgId,cashArr,r,w,h){
+
+max0n.cashFlow = function (svgId, cashArr, r, w, h) {
 	var svg = document.getElementById(svgId);
 	var circleArr = new Array();
 	var groupArr = new Array();
@@ -95,7 +97,7 @@ max0n.cashFlow = function (svgId,cashArr,r,w,h){
 			txArr[i].setAttribute("y", svg.offsetHeight/2+(R+(i-1)*heig)*Math.sin((180+(i-1)*15)*Math.PI/180)+(10+i/rad)/3.5) ;
 			circleArr[i].setAttribute("cx", svg.offsetWidth/2+(R+(i-1)*widt)*Math.cos((180+(i-1)*15)*Math.PI/180)) ;
 			circleArr[i].setAttribute("cy", svg.offsetHeight/2+(R+(i-1)*heig)*Math.sin((180+(i-1)*15)*Math.PI/180)) ;
-		}else{
+		} else {
 			txArr[i].setAttribute("x", svg.offsetWidth/2+(R+i*widt)*Math.cos(i*15*Math.PI/180)) ;
 			txArr[i].setAttribute("y", svg.offsetHeight/2+(R+i*heig)*Math.sin(i*15*Math.PI/180)+(10+i/rad)/3.5) ;
 			circleArr[i].setAttribute("cx", svg.offsetWidth/2+(R+i*widt)*Math.cos(i*15*Math.PI/180)) ;
@@ -109,12 +111,12 @@ max0n.cashFlow = function (svgId,cashArr,r,w,h){
 		groupArr[i].appendChild(txArr[i]);
 		baseGroup.appendChild(groupArr[i]);//размещение группы в Базовой группе
 
-		(function(i){
+		(function(i) {
 			groupArr[i].onmouseover = function(){
 				animate({
 					el : groupArr[i],
 					duration: 200,
-					delta: makeEaseOut(quad),
+					delta: makeEaseOut(quad, 0),
 					from: Math.round(circleArr[i].getAttribute('r')),
 					to: (Math.round(15+i)*100)/70,
 					step: function(delta,from,to) {
@@ -126,7 +128,7 @@ max0n.cashFlow = function (svgId,cashArr,r,w,h){
 				animate({
 					el : groupArr[i],
 					duration: 200,
-					delta: makeEaseOut(quad),
+					delta: makeEaseOut(quad, 0),
 					//from: 5,
 					from: Math.round(circleArr[i].getAttribute('r')),
 					to: (Math.round(15+i)*100)/100,
@@ -162,11 +164,11 @@ max0n.cashFlow = function (svgId,cashArr,r,w,h){
 		step: function(delta, from) {
 			totalArr[1][4].setAttribute('r',delta*(90-(Math.round(from*100)/100))+(Math.round(from*100)/100));
 			if(delta<1) baseGroup.setAttribute("opacity", delta);
-			else baseGroup.setAttribute("opacity", 1);
+			else baseGroup.setAttribute("opacity", '1');
 
 		}
 	});
-	totalArr[0].onmouseover = function(){
+	totalArr[0].onmouseover = function() {
 		animate({
 			el : totalArr[0],
 			duration: 700,
@@ -179,7 +181,7 @@ max0n.cashFlow = function (svgId,cashArr,r,w,h){
 			}
 		});
 	};
-	totalArr[0].onmouseout = function(){
+	totalArr[0].onmouseout = function() {
 		animate({
 			el : totalArr[0],
 			duration: 700,
@@ -193,17 +195,18 @@ max0n.cashFlow = function (svgId,cashArr,r,w,h){
 		});
 	};
 }
+
 // ----------- core of animation ------------- //
-function animate(opts) {
+export function animate(opts) {
   var el = opts.el || false;
-  var start = new Date;
+  var start = +new Date();
   var delta = opts.delta || linear;
   var from = opts.from || 0;
   var to =  opts.to || 0;
   //opts.complete = function(){alert(this);};
-	if(el){ clearInterval(opts.el.timer);
+	if (el) { clearInterval(opts.el.timer);
     opts.el.timer = setInterval(function() {
-    var progress = (new Date - start) / opts.duration;
+    var progress = (+new Date - start) / opts.duration;
 
     if (progress > 1) progress = 1;
 
@@ -216,7 +219,7 @@ function animate(opts) {
   }, opts.delay || 20);}
   else {
   var timer = setInterval(function() {
-    var progress = (new Date - start) / opts.duration;
+    var progress = (+new Date - start) / opts.duration;
 
     if (progress > 1) progress = 1;
 
@@ -230,18 +233,47 @@ function animate(opts) {
 }
 
 // ---------------- Delta for animation ---------------- //
-function quad(progress) {
+function linear(progress) {
+  return progress;
+}
+
+export function elastic(progress) {
+  return Math.pow(2, 15 * (progress-1)) * Math.cos(20*Math.PI*1.5/3*progress)
+}
+
+export function quad(progress) {
   return Math.pow(progress, 2)
 }
-function makeEaseInOut(delta) {
+
+function circ(progress) {
+    return 1 - Math.sin(Math.acos(progress))
+}
+
+function back(progress, x) {
+    //var x = 2.9;
+    return Math.pow(progress, 2) * ((x + 1) * progress - x)
+}
+
+export function makeEaseInOut(delta) {
   return function(progress) {
-    if (progress < .5)
-      return delta(2*progress) / 2
-    else
-      return (2 - delta(2*(1-progress))) / 2
+    if (progress < .5) return delta(2*progress) / 2;
+    return (2 - delta(2*(1-progress))) / 2
   }
 }
+
+export function makeEaseOut(delta, x) {
+  return function(progress) {
+    return 1 - delta(1 - progress, x)
+  }
+}
+
+// export function makeEaseOut(delta) {
+//   return function(progress) {
+//     return 1 - delta(1 - progress)
+//   }
+// }
+
 // ------------------ Get random int ------------------ //
-function getRandomInt (min, max) {
+export function getRandomInt (min, max) {
 	return Math.floor(Math.random() * (max - min + 1)) + min;
 }
