@@ -1,15 +1,15 @@
 // ----------- core of animation ------------- //
 export function animate(opts: any): void {
-  var el = opts.el || false;
-  var start = +new Date();
-  var delta = opts.delta || linear;
-  var from = opts.from || 0;
-  var to =  opts.to || 0;
+  const el = opts.el || false;
+  const start = +new Date();
+  const delta = opts.delta || linear;
+  const from = opts.from || 0;
+  const to =  opts.to || 0;
   //opts.complete = function(){alert(this);};
   if (el) {
     clearInterval(opts.el.timer);
-    opts.el.timer = setInterval(function() {
-      var progress = (+new Date - start) / opts.duration;
+    opts.el.timer = setInterval(() => {
+      let progress = (+new Date - start) / opts.duration;
 
       if (progress > 1) progress = 1;
 
@@ -21,8 +21,8 @@ export function animate(opts: any): void {
       }
     }, opts.delay || 20);
   } else {
-    var timer = setInterval(function() {
-      var progress = (+new Date - start) / opts.duration;
+    const timer = setInterval(() => {
+      let progress = (+new Date - start) / opts.duration;
 
       if (progress > 1) progress = 1;
 
@@ -49,15 +49,6 @@ export function quad(progress: number): number {
   return Math.pow(progress, 2)
 }
 
-// function circ(progress: number): number {
-//     return 1 - Math.sin(Math.acos(progress))
-// }
-
-// function back(progress: number, x: number): number {
-//   //var x = 2.9;
-//   return Math.pow(progress, 2) * ((x + 1) * progress - x)
-// }
-
 export function makeEaseInOut(delta: any): object {
   return function(progress: number): number {
     if (progress < .5) return delta(2*progress) / 2;
@@ -70,12 +61,6 @@ export function makeEaseOut(delta: any, x: number): object {
     return 1 - delta(1 - progress, x)
   }
 }
-
-// export function makeEaseOut(delta) {
-//   return function(progress) {
-//     return 1 - delta(1 - progress)
-//   }
-// }
 
 // ------------------ Get random int ------------------ //
 export function getRandomInt (min: number, max: number): number {
