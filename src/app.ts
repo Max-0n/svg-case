@@ -154,7 +154,7 @@ window.onload = function () {
       drawPath[p].onmouseout = function() {
         svg.removeChild(textArr[1]);
         spanArr[0].textContent = 'Capital';
-        spanArr[1].textContent = '$'+capital;
+        spanArr[1].textContent = '$'+capital.toLocaleString('en');
         svg.appendChild(textArr[0]);
         animate({
           el: drawPath[p],
