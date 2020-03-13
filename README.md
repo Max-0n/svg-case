@@ -6,7 +6,7 @@
 
 ![Validated HTML5](./src/images/validated-html5.svg) ![You didn't ask for this](./src/images/you-didnt-ask-for-this.svg)
 
-![Latest Stable Version](/preview.gif)
+[![Chart](./preview.gif)](https://max-0n.github.io/svg-case/)
 
 # SVG Chart
 

@@ -11,21 +11,21 @@ window.onload = function () {
   rand: number = getRandomInt(90, 360),
   capital: number,
   valArray: Array<[string, number, string, string, string]> = [
-    ['Russian Federation', 1700, '#4dde5e', 'https://github.com/Max-0n/svg-case', 'Moscow'],
-    ['Russian Federation', 1400, '', 'https://github.com/Max-0n/svg-case', 'Sochi'],
-    ['Russian Federation', 700, '', 'https://github.com/Max-0n/svg-case', 'Bank 1'],
-    ['Russian Federation', 900, '', 'https://github.com/Max-0n/svg-case', 'Bank 2'],
-    ['Russian Federation', 970, '#79ec87', 'https://github.com/Max-0n/svg-case', 'Bank 3'],
-    ['German', 850, '#fc8f30', 'https://github.com/Max-0n/svg-case', 'Berlin'],
-    ['German', 540, '', 'https://github.com/Max-0n/svg-case', 'Bank 1'],
-    ['German', 1200, '', 'https://github.com/Max-0n/svg-case', 'Bank 2'],
-    ['German', 1100, '', 'https://github.com/Max-0n/svg-case', 'Bank 3'],
-    ['German', 1450, '#fcd053', 'https://github.com/Max-0n/svg-case', 'Bank 4'],
-    ['China', 1450, '#75c6de', 'https://github.com/Max-0n/svg-case', 'Pekin'],
-    ['China', 1280, '', 'https://github.com/Max-0n/svg-case', 'Bank 1'],
-    ['China', 950, '', 'https://github.com/Max-0n/svg-case', 'Bank 2'],
-    ['China', 1100, '', 'https://github.com/Max-0n/svg-case', 'Bank 3'],
-    ['China', 1000, '#95e9fd', 'https://github.com/Max-0n/svg-case', 'Bank 4']
+    ['Russian Federation', 1700, '#4dde5e', 'https://max-0n.github.io/svg-case/', 'Moscow'],
+    ['Russian Federation', 1400, '', 'https://max-0n.github.io/svg-case/', 'Sochi'],
+    ['Russian Federation', 700, '', 'https://max-0n.github.io/svg-case/', 'Bank 1'],
+    ['Russian Federation', 900, '', 'https://max-0n.github.io/svg-case/', 'Bank 2'],
+    ['Russian Federation', 970, '#79ec87', 'https://max-0n.github.io/svg-case/', 'Bank 3'],
+    ['German', 850, '#fc8f30', 'https://max-0n.github.io/svg-case/', 'Berlin'],
+    ['German', 540, '', 'https://max-0n.github.io/svg-case/', 'Bank 1'],
+    ['German', 1200, '', 'https://max-0n.github.io/svg-case/', 'Bank 2'],
+    ['German', 1100, '', 'https://max-0n.github.io/svg-case/', 'Bank 3'],
+    ['German', 1450, '#fcd053', 'https://max-0n.github.io/svg-case/', 'Bank 4'],
+    ['China', 1450, '#75c6de', 'https://max-0n.github.io/svg-case/', 'Pekin'],
+    ['China', 1280, '', 'https://max-0n.github.io/svg-case/', 'Bank 1'],
+    ['China', 950, '', 'https://max-0n.github.io/svg-case/', 'Bank 2'],
+    ['China', 1100, '', 'https://max-0n.github.io/svg-case/', 'Bank 3'],
+    ['China', 1000, '#95e9fd', 'https://max-0n.github.io/svg-case/', 'Bank 4']
   ];
   const svg: HTMLElement = document.getElementById("svg");
 
