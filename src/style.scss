@@ -19,18 +19,14 @@ body {
 #logo {
 	margin: 10px auto 0px;
 	width: 100%;
-	max-width: 433px;
-	height: 220px;
+	max-width: 250px;
 }
 
 #svg {
+	max-width: 700px;
 	border-radius: 6px;
-	background: #fff;
 	transition: background-color 1s ease-in-out, fill 1s ease-in-out;
 	fill: #08c;
 
-	@media (prefers-color-scheme: dark) {
-		background-color: #324355;
-		fill: #fff;
-	}
+	@media (prefers-color-scheme: dark) { fill: #fff; }
 }

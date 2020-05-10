@@ -14,6 +14,7 @@ const config = {
   resolve: {
     extensions: [".ts", ".tsx", ".js"]
   },
+  devtool: 'inline-source-map',
   plugins: [
     new HtmlWebpackPlugin({
       template: './src/index.pug',
