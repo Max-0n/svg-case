@@ -1,38 +1,27 @@
+export interface AnimateElement {
+  duration: number,
+  delta: any,
+  from?: number,
+  to?: number,
+  step: any
+}
+
 // ----------- core of animation ------------- //
-export function animate(opts: any): void {
-  const el = opts.el || false;
-  const start = +new Date();
-  const delta = opts.delta || linear;
+export function animate(opts: AnimateElement): void {
+  const start = Date.now();
   const from = opts.from || 0;
-  const to =  opts.to || 0;
-  // opts.complete = function(){alert(this);};
-  if (el) {
-    clearInterval(opts.el.timer);
-    opts.el.timer = setInterval(() => {
-      let progress = (+new Date() - start) / opts.duration;
+  const to =  opts.to || 100;
+  loop();
 
-      if (progress > 1) { progress = 1; }
-
-      opts.step(delta(progress), from, to);
-
-      if (progress === 1) {
-        clearInterval(opts.el.timer);
-        opts.complete && opts.complete();
-      }
-    }, opts.delay || 20);
-  } else {
-    const timer = setInterval(() => {
-      let progress = (+new Date() - start) / opts.duration;
-
-      if (progress > 1) { progress = 1; }
-
-      opts.step(delta(progress), from, to);
-
-      if (progress === 1) {
-        clearInterval(timer);
-        opts.complete && opts.complete();
-      }
-    }, opts.delay || 15);
+  function loop() {
+    const delta = opts.delta || linear;
+    let progress = (Date.now() - start) / opts.duration;
+    if (progress > 1) {
+      progress = 1;
+      return;
+    }
+    opts.step(delta(progress), from, to);
+    requestAnimationFrame(loop);
   }
 }
 

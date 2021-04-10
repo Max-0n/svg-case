@@ -1,83 +1,48 @@
-import { getRandomInt, animate, makeEaseInOut, makeEaseOut, elastic, quad } from './animate';
+import {
+  AnimateElement,
+  getRandomInt,
+  animate,
+  makeEaseInOut,
+  makeEaseOut,
+  elastic,
+  quad
+} from './animate';
 
-export default function (htmlElement: HTMLElement) {
+interface Share {
+  value: number;
+  price: number;
+  name: string;
+  tag?: number;
+  color?: string;
+  link?: string;
+  path?: SVGPathElement;
+}
+
+export default function (htmlElement: HTMLElement, payload: Share[]) {
   const spanArr: SVGTextElement[] = new Array();
   const textArr: SVGTextElement[] = new Array();
   const rand: number = getRandomInt(90, 360);
   const svg: HTMLElement = htmlElement;
   if (!svg.getAttribute('viewBox')) { throw new Error('Not found "viewBox" property of svgElement'); }
   const svgWidth: number = +svg.getAttribute('viewBox').split(' ')[2];
-  const svgHeight: number = +svg.getAttribute('viewBox').split(' ')[3]                                        ;
+  const svgHeight: number = +svg.getAttribute('viewBox').split(' ')[3];
   const R: number = 170;
+  const STEP = 20;
+  const COLORS: Array<number> = [190];
   let angleVal: number = 0;
-  let capital: number;
-  let valArray: [string, number, string, string, string][] = [
-    ['Stock', 10, '#4dde5e', '', 'Moscow'],
-    ['Stock', 10, '', '', 'Sochi'],
-    ['Stock', 10, '', '', 'Bank 1'],
-    ['Stock', 10, '', '', 'Bank 2'],
-    ['Stock', 10, '#79ec87', '', 'Bank 3'],
-    ['Stock2', 10, '#fc8f30', '', 'Berlin'],
-    ['Stock2', 10, '', '', 'Bank 1'],
-    ['Stock2', 10, '', '', 'Bank 2'],
-    ['Stock2', 10, '', '', 'Bank 3'],
-    ['Stock2', 10, '#fcd053', '', 'Bank 4'],
-    ['Stock4', 10, '#75c6de', '', 'Pekin'],
-    ['Stock4', 10, '', '', 'Bank 1'],
-    ['Stock4', 10, '', '', 'Bank 2'],
-    ['Stock4', 10, '', '', 'Bank 3'],
-    ['Stock4', 10, '#95e9fd', '', 'Bank 4']
-  ];
+  let valArray: Share[] = payload;
+  // Вычисляем капитал + Округление до сотых
+  let capital: number = valArray.reduce((accumulator, share) => accumulator + share.value * share.price, 0);
+  capital = Math.round(capital * 100) / 100;
 
   // Заполняем недостающие промежуточные цвета
-  valArray = valArray.map(
-    (
-      element: [string, number, string, string, string],
-      index: number,
-      array: [string, number, string, string, string][]
-    ) => {
-
-    // если цвет отсутствует
-    if (!element[2]) {
-      const fromRGB: string = array[index - 1][2];
-      let toRGB: string = '';
-      let step: number = 0;
-
-      // ищем следующий известный RGB
-      while (toRGB.length < 6) {
-        step++;
-        if (array[index + step][2]) {
-          toRGB = array[index + step][2];
-          step++;
-        }
-      }
-
-      // шаг для каждого цвета
-      const toR: number = parseInt(toRGB.substr(1, 2), 16);
-      const toG: number = parseInt(toRGB.substr(3, 2), 16);
-      const toB: number = parseInt(toRGB.substr(5, 2), 16);
-
-      const fromR: number = parseInt(fromRGB.substr(1, 2), 16);
-      const fromG: number = parseInt(fromRGB.substr(3, 2), 16);
-      const fromB: number = parseInt(fromRGB.substr(5, 2), 16);
-
-      const sR: number = ((toR - fromR) / step);
-      const sG: number = ((toG - fromG) / step);
-      const sB: number = ((toB - fromB) / step);
-
-      // генерация недостающего цвета
-      element[2] = '#';
-      element[2] += Math.round(fromR + sR).toString(16);
-      element[2] += Math.round(fromG + sG).toString(16);
-      element[2] += Math.round(fromB + sB).toString(16);
-    }
-
-    return element;
+  valArray = valArray.map((share: Share, index: number, array: Share[] ) => {
+    const delta: number = index / array.length;
+    // Get Random HSL color
+    const color: number = COLORS[Math.floor(Math.random() * 100 % COLORS.length)];
+    share.color = `hsl(${color}deg 67% ${35 + (STEP * delta)}%)`;
+    return share;
   });
-
-  // Вычисляем капитал + Округление до сотых
-  capital = valArray.reduce((accumulator, currentValue) => accumulator + currentValue[1], 0);
-  capital = Math.round(capital * 100) / 100;
 
   // Функция постоения дуг.
   const makeArc = (value: number, rad: number, makeAngle: number): string => {
@@ -93,82 +58,79 @@ export default function (htmlElement: HTMLElement) {
     return path;
   };
 
-  valArray.forEach((element: [string, number, string, string, string]) => {
+  valArray.forEach((share: Share) => {
     // Фиксируем угол сдвига элемента
     const angle = angleVal;
 
     // создаём дугу
-    const path: SVGPathElement = document.createElementNS('http://www.w3.org/2000/svg', 'path');
-    path.setAttribute('stroke-width', '10px');
-    path.setAttribute('stroke', element[2]);
-    path.setAttribute('fill', 'none');
-    path.setAttribute('d', makeArc(0, 90, 0));
-    if (element[3]) {
-      path.setAttribute('style', 'cursor: pointer');
+    share.path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+    share.path.setAttribute('stroke-width', '10px');
+    share.path.setAttribute('stroke', share.color);
+    share.path.setAttribute('fill', 'none');
+    share.path.setAttribute('d', makeArc(0, 90, 0));
+    if ('link' in share) {
+      share.path.setAttribute('style', 'cursor: pointer');
       // при клике...
-      path.onclick = (): void => {
-        window.open(element[3], '_blank');
+      share.path.onclick = (): void => {
+        window.open(share.link, '_blank');
       };
     }
-    svg.appendChild(path);
+    svg.appendChild(share.path);
 
     // анимированно замкнуть кольцо
-    animate({
+    animate(<AnimateElement>{
       duration: 1900,
       delta: makeEaseInOut(quad),
       step: (delta: number): void => {
-        path.setAttribute('d', makeArc(delta * element[1], (delta * (R - 90)) + 90, delta * angle));
+        share.path.setAttribute('d', makeArc(delta * share.value * share.price, (delta * (R - 90)) + 90, delta * angle));
       }
     });
 
     // анимированно увеличить ширину элементов
     animate({
-      el: element,
       duration: 1900,
       delta: makeEaseInOut(quad),
       step: (delta: number): void => {
-        path.setAttribute('stroke-width', (delta * 100) + 'px');
+        share.path.setAttribute('stroke-width', (delta * 100) + 'px');
       }
-    });
+    } as AnimateElement);
 
     // при наведении...
-    path.onmouseover = (): void => {
+    share.path.onmouseover = (): void => {
       svg.removeChild(textArr[0]);
-      spanArr[2].textContent = element[4];
-      spanArr[3].textContent = element[0];
-      spanArr[4].textContent = '$' + element[1].toLocaleString('en');
+      spanArr[2].textContent = share.name;
+      spanArr[3].textContent = `${capital / 100 * share.price}`;
+      spanArr[4].textContent = `$${(share.value * share.price).toLocaleString('en')} `;
       svg.appendChild(textArr[1]);
 
-      animate({
-        el: path,
+      animate(<AnimateElement>{
         duration: 2000,
         delta: makeEaseOut(elastic, 0),
         step: (delta: number): void => {
-          path.setAttribute('stroke-width', (delta * (140 - 100) + 100) + 'px');
-          path.setAttribute('opacity', String(delta * (0.4 - 1) + 1));
+          share.path.setAttribute('stroke-width', (delta * (140 - 100) + 100) + 'px');
+          share.path.setAttribute('opacity', String(delta * (0.4 - 1) + 1));
         }
       });
     };
 
     // при отводе...
-    path.onmouseout = (): void => {
+    share.path.onmouseout = (): void => {
       svg.removeChild(textArr[1]);
       spanArr[0].textContent = 'Capital';
       spanArr[1].textContent = '$' + capital.toLocaleString('en');
       svg.appendChild(textArr[0]);
-      animate({
-        el: path,
+      animate(<AnimateElement>{
         duration: 2000,
         delta: makeEaseOut(elastic, 0),
         step: (delta: number): void => {
-          path.setAttribute('stroke-width', (delta * (100 - 140) + 140) + 'px');
-          path.setAttribute('opacity', String(delta * (1 - 0.4) + 0.4));
+          share.path.setAttribute('stroke-width', (delta * (100 - 140) + 140) + 'px');
+          share.path.setAttribute('opacity', String(delta * (1 - 0.4) + 0.4));
         }
       });
     };
 
     // Переменная отступа от начала координат
-    angleVal += element[1];
+    angleVal += share.value * share.price;
   });
 
   // Блоки с текстом

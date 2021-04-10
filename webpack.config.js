@@ -2,6 +2,7 @@ const path = require('path');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const { CleanWebpackPlugin } = require('clean-webpack-plugin');
+const Dotenv = require('dotenv-webpack');
 
 const config = {
   entry: {
@@ -16,6 +17,9 @@ const config = {
   },
   devtool: 'inline-source-map',
   plugins: [
+    new Dotenv({
+      allowEmptyValues: true
+    }),
     new HtmlWebpackPlugin({
       template: './src/index.pug',
       inject: true
