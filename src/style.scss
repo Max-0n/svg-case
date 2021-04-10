@@ -16,17 +16,17 @@ body {
 	@media (prefers-color-scheme: dark) { background-color: #243241; }
 }
 
-#logo {
-	margin: 10px auto 0px;
-	width: 100%;
-	max-width: 250px;
-}
+// #logo {
+// 	margin: 10px auto 0px;
+// 	width: 100%;
+// 	max-width: 250px;
+// }
 
 #svg {
 	max-width: 700px;
 	border-radius: 6px;
 	transition: background-color 1s ease-in-out, fill 1s ease-in-out;
 	fill: #08c;
-
+	background: rgba(255, 255, 255, .1);
 	@media (prefers-color-scheme: dark) { fill: #fff; }
 }
