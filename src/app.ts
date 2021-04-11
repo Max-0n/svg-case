@@ -1,27 +1,79 @@
 require('./style.scss');
 import mainChart from './chart';
+import axios from './axios';
 
 console.log('%cCreated by Max0n', 'color: #fff; font-weight: bold; background: #47c; padding:3px 5px;');
-mainChart(document.getElementById('svg'), [
-  { value: 10, price: 2265, name: 'Shares1', tag: 1 },
-  { value: 100, price: 230, name: 'Shares2', tag: 1 },
-  { value: 1100, price: 130, name: 'Shares3', tag: 1 },
-  { value: 85, price: 235.25, name: 'Shares4', tag: 2 },
-  { value: 60, price: 220.84, name: 'Shares5', tag: 2 },
-  { value: 40, price: 377.77, name: 'Shares6', tag: 2 },
-  { value: 50, price: 572.68, name: 'Shares7', tag: 2 },
-  { value: 90, price: 187.22, name: 'Shares8' },
-  { value: 40, price: 499.84, name: 'Shares9' },
-  { value: 5, price: 3299.3, name: 'Shares10', tag: 3 },
-  { value: 20, price: 554.58, name: 'Shares11', tag: 4 },
-  { value: 80, price: 123.44, name: 'Shares12', tag: 4 },
-  { value: 20, price: 683.8, name: 'Shares13' },
-  { value: 20, price: 639, name: 'Shares14' },
-]);
 
-if (process.env.NODE_ENV === 'development') {
-  setInterval(() => {
-    // @ts-ignore
-    console.info(window.performance.memory);
-  }, 1000);
+setUp();
+
+let stocks = JSON.parse(localStorage.getItem('stocks')) || {};
+
+mainChart(document.getElementById('svg'), stocks);
+
+// if (process.env.NODE_ENV === 'development') {
+//   setInterval(() => {
+//     // @ts-ignore
+//     console.info(window.performance.memory);
+//   }, 5000);
+// }
+
+document.getElementById('menu').onclick = () => {
+  let stocks = localStorage.getItem('stocks');
+  stocks = stocks ? JSON.parse(stocks) : {};
+
+  const symbol = prompt('Set SYMBOL ("TSLA", "AAPL" or another...):');
+  if (symbol) {
+    axios.get('market/v2/get-quotes', {
+        params: { region: 'US', symbols: symbol, lang: 'en' }
+      })
+      .then(({ data: { quoteResponse: { error, result } } }) => {
+        if (error) throw new Error(error);
+        else {
+          const quantity = prompt('Set quantity of stocks');
+
+          for (let item of result) {
+            stocks[`${item.symbol}`] = {
+              value: +quantity,
+              price: item.regularMarketPrice,
+              symbol: item.symbol
+            }
+          }
+
+          localStorage.setItem('stocks', JSON.stringify(stocks));
+          mainChart(document.getElementById('svg'), stocks);
+        }
+        // handle success
+      })
+      .catch(error => console.info('get-quotes request fail', error));
+  } else {
+    alert('Not valid');
+  }
+};
+
+function setUp() {
+  let stocks = localStorage.getItem('stocks');
+  stocks = stocks ? JSON.parse(stocks) : {};
+  // INFO: Docs – https://rapidapi.com/apidojo/api/yahoo-finance1
+  axios.get('market/v2/get-quotes', {
+      params: {
+        region: 'US',
+        symbols: localStorage.getItem('stocks'),
+        lang: 'en'
+      }
+    })
+    .then(({ data: { quoteResponse: { error, result } } }) => {
+      if (error) throw new Error(error);
+      else {
+        for (let item of result) {
+          // console.log('item.symbol', item.symbol, stocks[`${item.symbol}`]);
+          stocks[`${item.symbol}`] = {
+            value: stocks[`${item.symbol}`].value || 0,
+            price: item.regularMarketPrice,
+            symbol: item.symbol
+          }
+        }
+        localStorage.setItem('stocks', JSON.stringify(stocks));
+      }
+    })
+    .catch(error => console.info('get-quotes request fail', error));
 }

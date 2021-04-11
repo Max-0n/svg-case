@@ -30,3 +30,22 @@ body {
 	// background: rgba(255, 255, 255, .1);
 	@media (prefers-color-scheme: dark) { fill: #fff; }
 }
+
+section.menu {
+	position: fixed;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	top: 0;
+	left: 0;
+	width: 75px;
+	height: 75px;
+	background: rgba(255,255,255,.3);
+
+	button#menu {
+		cursor: pointer;
+		display: block;
+		width: calc(100% - 20px);
+		height: calc(100% - 20px);
+	}
+}

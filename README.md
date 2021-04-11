@@ -8,7 +8,7 @@
 
 [![Chart](./preview.gif)](https://max-0n.github.io/svg-case/)
 
-# SVG Chart
+# SVG Chart ([Demo](https://max-0n.github.io/svg-case/))
 
 ## To work with:
 - Install latest version of [NodeJS](https://nodejs.org/)

@@ -11,14 +11,14 @@ import {
 interface Share {
   value: number;
   price: number;
-  name: string;
+  symbol: string;
   tag?: number;
   color?: string;
   link?: string;
   path?: SVGPathElement;
 }
 
-export default function (htmlElement: HTMLElement, payload: Share[]) {
+export default function (htmlElement: HTMLElement, payload: any) {
   const spanArr: SVGTextElement[] = new Array();
   const textArr: SVGTextElement[] = new Array();
   const rand: number = getRandomInt(90, 360);
@@ -30,13 +30,21 @@ export default function (htmlElement: HTMLElement, payload: Share[]) {
   const STEP = 20;
   const COLORS: Array<number> = [190];
   let angleVal: number = 0;
-  let valArray: Share[] = payload;
+  let stocks: any = payload;
   // Вычисляем капитал + Округление до сотых
-  let capital: number = valArray.reduce((accumulator, share) => accumulator + share.value * share.price, 0);
+  let capital: number = 0;
+
+  if (Object.keys(stocks).length) {
+    capital = (Object.values(stocks).reduce(
+      (accumulator: number, share: Share) => accumulator + share.value * share.price, 0
+    )) as number;
+  }
+
+  // capital = stocks.reduce((accumulator, share) => accumulator + share.value * share.price, 0);
   capital = Math.round(capital * 100) / 100;
 
   // Заполняем недостающие промежуточные цвета
-  valArray = valArray.map((share: Share, index: number, array: Share[] ) => {
+  Object.values(stocks).forEach((share: Share, index: number, array: Share[]) => {
     const delta: number = index / array.length;
     // Get Random HSL color
     const color: number = COLORS[Math.floor(Math.random() * 100 % COLORS.length)];
@@ -58,7 +66,7 @@ export default function (htmlElement: HTMLElement, payload: Share[]) {
     return path;
   };
 
-  valArray.forEach((share: Share) => {
+  Object.values(stocks).forEach((share: Share) => {
     // Фиксируем угол сдвига элемента
     const angle = angleVal;
 
@@ -98,7 +106,7 @@ export default function (htmlElement: HTMLElement, payload: Share[]) {
     // при наведении...
     share.path.onmouseover = (): void => {
       svg.removeChild(textArr[0]);
-      spanArr[2].textContent = share.name;
+      spanArr[2].textContent = share.symbol;
       spanArr[3].textContent = `${capital / 100 * share.price}`;
       spanArr[4].textContent = `$${(share.value * share.price).toLocaleString('en')} `;
       svg.appendChild(textArr[1]);
