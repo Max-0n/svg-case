@@ -57,7 +57,7 @@ function setUp() {
   axios.get('market/v2/get-quotes', {
       params: {
         region: 'US',
-        symbols: localStorage.getItem('stocks'),
+        symbols: Object.keys(JSON.parse(localStorage.getItem('stocks'))).join(','),
         lang: 'en'
       }
     })
